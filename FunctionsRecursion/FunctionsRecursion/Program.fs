@@ -41,21 +41,33 @@ let tailDigitalSum num : int =
             digitalSubSum currentNum accumulator
     digitalSubSum num 0
 
+let rec factorial num : int =
+    if num <= 1 then 1
+    else num * factorial(num - 1)
+
+let tailFactorial num : int = 
+    let rec helper num accumulator =
+        if num <= 1 then accumulator
+        else accumulator * num |> helper(num - 1)
+    helper num 1
+
 [<EntryPoint>]
 let main argv =
-    System.Console.WriteLine "Введите радиус: "
-    let r = Console.ReadLine() |> float
+    let fact = tailFactorial 5
+    System.Console.WriteLine(fact)
 
-    System.Console.WriteLine "Введите высоту: "
-    let h = System.Console.ReadLine() |> float
+    let func (arg: bool) = 
+        match arg with
+        | true -> tailDigitalSum
+        | false -> tailFactorial
 
-    let k = r |> circleSquare |> cylinderVolume h 
-    System.Console.WriteLine(k) 
+    let f1 = func true
+    let f2 = func false
 
-    let uprec = digitalSum 525
-    Console.WriteLine($"Рекурсия вверх: {uprec}")
+    System.Console.WriteLine(f1)
+    System.Console.WriteLine(f2)
 
-    let tailrec = tailDigitalSum 525
-    Console.WriteLine($"Рекурсия вниз: {tailrec}")
+    System.Console.WriteLine(f1 525)
+    System.Console.WriteLine(f2 5)
 
     0
