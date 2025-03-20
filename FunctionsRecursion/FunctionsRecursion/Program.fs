@@ -27,6 +27,10 @@ let circleSquare r : float =
 let cylinderVolume h S : float =
     h * S
 
+let rec digitalSum num : int =
+    if num = 0 then 0
+    else (num % 10) + (digitalSum (num / 10))
+
 [<EntryPoint>]
 let main argv =
     System.Console.WriteLine "Введите радиус: "
@@ -38,5 +42,7 @@ let main argv =
     let k = r |> circleSquare |> cylinderVolume h 
     System.Console.WriteLine(k) 
 
-    0
+    let uprec = digitalSum 525
+    Console.WriteLine($"Рекурсия вверх: {uprec}")
 
+    0
