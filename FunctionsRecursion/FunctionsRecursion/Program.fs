@@ -24,10 +24,8 @@ let circleSquare r : float =
     let pi = 3.14159
     pi * r * r
 
-let volume h S : float =
+let cylinderVolume h S : float =
     h * S
-
-let cylinderVolume h = volume h >> (circleSquare)
 
 [<EntryPoint>]
 let main argv =
@@ -37,7 +35,8 @@ let main argv =
     System.Console.WriteLine "Введите высоту: "
     let h = System.Console.ReadLine() |> float
 
-    let k = cylinderVolume h r
+    let k = r |> circleSquare |> cylinderVolume h 
     System.Console.WriteLine(k) 
 
     0
+
