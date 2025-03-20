@@ -24,22 +24,20 @@ let circleSquare r : float =
     let pi = 3.14159
     pi * r * r
 
-let cylinderVolume h r : float =
-    h * circleSquare r
+let volume h S : float =
+    h * S
 
-let curryCylinderVolume h = 
-    fun r -> cylinderVolume h r
+let cylinderVolume h = volume h >> (circleSquare)
 
 [<EntryPoint>]
 let main argv =
-    printf "Введите высоту: "
-    let h = Console.ReadLine() |> float
-
-    printf "Введите радиус: "
+    System.Console.WriteLine "Введите радиус: "
     let r = Console.ReadLine() |> float
 
-    let curriedVolume = curryCylinderVolume h
-    let vol = curriedVolume r
-    printfn "Объем цилиндра: %f" vol
+    System.Console.WriteLine "Введите высоту: "
+    let h = System.Console.ReadLine() |> float
+
+    let k = cylinderVolume h r
+    System.Console.WriteLine(k) 
 
     0
