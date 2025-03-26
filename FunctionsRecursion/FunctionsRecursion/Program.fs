@@ -104,12 +104,34 @@ let curryChoiseLP () =
 let superposChoiseLP () =
     (Console.ReadLine >> choiseLP >> Console.WriteLine)()
 
+let rec gcd a b = 
+    if b = 0 then a
+    else gcd b (a % b)
+
+let coprimeDigits (num: int) (func: int -> int -> int) (initial: int) =
+    let rec helper current acc =
+        if current = 0 then acc
+        else
+            let digit = current % 10
+            let newAcc = 
+                if digit <> 0 && gcd num digit = 1 then func acc digit
+                else acc
+            helper (current / 10) newAcc
+    helper num initial
+
+let sumCoprimeDigits num = coprimeDigits num (+) 0
+let multiplyCoprimeDigits num = coprimeDigits num (*) 1
+let minCoprimeDigits num = coprimeDigits num (min) Int32.MaxValue
+let maxCoprimeDigits num = coprimeDigits num (max) Int32.MinValue
+let countCoprimeDigits num = coprimeDigits num (fun acc _ -> acc + 1) 0 
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine("Какой у тебя любимый язык программирования?")
-    curryChoiseLP ()
-
-    Console.WriteLine("Какой у тебя любимый язык программирования?")
-    superposChoiseLP ()
+    let num = 125
+    Console.WriteLine($"Сумма взаимно простых с {num} = {sumCoprimeDigits num}")
+    Console.WriteLine($"Произведение взаимно простых с {num} = {multiplyCoprimeDigits num}")
+    Console.WriteLine($"Минимум из взаимно простых с {num} = {minCoprimeDigits num}")
+    Console.WriteLine($"Максимум из взаимно простых с {num} = {maxCoprimeDigits num}")
+    Console.WriteLine($"Количество взаимно простых с {num} = {countCoprimeDigits num}")
 
     0
