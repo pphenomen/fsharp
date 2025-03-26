@@ -51,23 +51,25 @@ let tailFactorial num : int =
         else accumulator * num |> helper(num - 1)
     helper num 1
 
+let rec digitFold (num : int) (func : int -> int -> int) (initial : int) =
+    if num = 0 then initial
+    else
+        let digit = num % 10
+        let newInitial = func initial digit
+        digitFold (num / 10) func newInitial
+
 [<EntryPoint>]
 let main argv =
-    let fact = tailFactorial 5
-    System.Console.WriteLine(fact)
+    let sumDigits = digitFold 12345 (+) 0
+    Console.WriteLine($"Сумма чисел 12345 = {sumDigits}")
 
-    let func (arg: bool) = 
-        match arg with
-        | true -> tailDigitalSum
-        | false -> tailFactorial
+    let multiplyDigits = digitFold 12345 (*) 1
+    Console.WriteLine($"Произведение чисел 12345 = {multiplyDigits}")
 
-    let f1 = func true
-    let f2 = func false
+    let maxDigit = digitFold 12345 (max) Int32.MinValue
+    Console.WriteLine($"Максимальное число из 12345 = {maxDigit}")
 
-    System.Console.WriteLine(f1)
-    System.Console.WriteLine(f2)
-
-    System.Console.WriteLine(f1 525)
-    System.Console.WriteLine(f2 5)
+    let minDigit = digitFold 12345 (min) Int32.MaxValue
+    Console.WriteLine($"Минимальное число из 12345 = {minDigit}")
 
     0
