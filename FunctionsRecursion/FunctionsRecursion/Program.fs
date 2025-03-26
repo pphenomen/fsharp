@@ -88,15 +88,16 @@ let sumDigitsGreaterThreeCondition num =
 let minDigitsCondition num =
     digitFoldWithCondition num (fun acc digit -> min acc digit) Int32.MaxValue (fun digit -> true)
 
+let choiseLP input =
+    match input with
+    | "F#"| "Prolog" -> "Подлиза"
+    | "Ruby" -> "Мало было?"
+    | _ -> "Главное, что ты счастлив"
+
 [<EntryPoint>]
 let main argv =
-    let sumEvenDigits = sumEvenDigitsCondition 12345
-    Console.WriteLine($"Сумма четных цифр числа 12345 = {sumEvenDigits}")
-
-    let sumDigitsGreaterThree = sumDigitsGreaterThreeCondition 12345
-    Console.WriteLine($"Сумма цифр числа 12345 больших числа 3 = {sumDigitsGreaterThree}")
-
-    let minDigits = minDigitsCondition 12345
-    Console.WriteLine($"Минимальная цифра числа 12345 = {minDigits}")
+    Console.WriteLine("Какой у тебя любимый язык программирования?")
+    let input = Console.ReadLine()
+    Console.WriteLine(choiseLP input)
 
     0
