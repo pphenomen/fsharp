@@ -70,18 +70,33 @@ let digitFoldWithMin num =
 let digitFoldWithMax num =
     digitFold num (fun acc digit -> max acc digit) 0
 
+let digitFoldWithCondition (num: int) (func: int -> int -> int) (initial: int) (condition: int -> bool) =
+    let rec helper num acc = 
+        if num = 0 then acc
+        else
+            let digit = num % 10
+            let newAcc = if condition digit then func acc digit else acc
+            helper (num / 10) newAcc
+    helper num initial
+
+let sumEvenDigitsCondition num =
+    digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit % 2 = 0)
+
+let sumDigitsGreaterThreeCondition num =
+    digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit > 3)
+
+let minDigitsCondition num =
+    digitFoldWithCondition num (fun acc digit -> min acc digit) Int32.MaxValue (fun digit -> true)
+
 [<EntryPoint>]
 let main argv =
-    let sumDigits = digitFoldWithSum 12345
-    Console.WriteLine($"Сумма чисел 12345 = {sumDigits}")
+    let sumEvenDigits = sumEvenDigitsCondition 12345
+    Console.WriteLine($"Сумма четных цифр числа 12345 = {sumEvenDigits}")
 
-    let multiplyDigits = digitFoldWithMultiply 12345
-    Console.WriteLine($"Произведение чисел 12345 = {multiplyDigits}")
+    let sumDigitsGreaterThree = sumDigitsGreaterThreeCondition 12345
+    Console.WriteLine($"Сумма цифр числа 12345 больших числа 3 = {sumDigitsGreaterThree}")
 
-    let maxDigit = digitFoldWithMin 12345
-    Console.WriteLine($"Максимальное число из 12345 = {maxDigit}")
-
-    let minDigit = digitFoldWithMax 12345
-    Console.WriteLine($"Минимальное число из 12345 = {minDigit}")
+    let minDigits = minDigitsCondition 12345
+    Console.WriteLine($"Минимальная цифра числа 12345 = {minDigits}")
 
     0
