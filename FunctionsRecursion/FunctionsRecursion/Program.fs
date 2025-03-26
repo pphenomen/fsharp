@@ -15,10 +15,11 @@ let solveQuadratic a b c =
         None
 
 let res = solveQuadratic 1.0 2.0 -3.0
-match res with
-    | Some(x1, x2) -> printfn $"Решение: {x1}, {x2}"
-    | Some(x1, x2) when x1 = x2 -> printfn $"Уравнение имеет один корень: {x1}"
-    | None -> printfn "Нет вещественных корней"
+let resultOutput () =
+    match res with
+        | Some(x1, x2) -> printfn $"Решение: {x1}, {x2}"
+        | Some(x1, x2) when x1 = x2 -> printfn $"Уравнение имеет один корень: {x1}"
+        | None -> printfn "Нет вещественных корней"
 
 let circleSquare r : float =
     let pi = 3.14159
@@ -94,10 +95,21 @@ let choiseLP input =
     | "Ruby" -> "Мало было?"
     | _ -> "Главное, что ты счастлив"
 
+let curryChoiseLP () =
+    let input = Console.ReadLine()
+    let processing = choiseLP input
+    let output = Console.WriteLine processing
+    output
+
+let superposChoiseLP () =
+    (Console.ReadLine >> choiseLP >> Console.WriteLine)()
+
 [<EntryPoint>]
 let main argv =
     Console.WriteLine("Какой у тебя любимый язык программирования?")
-    let input = Console.ReadLine()
-    Console.WriteLine(choiseLP input)
+    curryChoiseLP ()
+
+    Console.WriteLine("Какой у тебя любимый язык программирования?")
+    superposChoiseLP ()
 
     0
