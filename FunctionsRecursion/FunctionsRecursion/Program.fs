@@ -125,6 +125,16 @@ let minCoprimeDigits num = coprimeDigits num (min) Int32.MaxValue
 let maxCoprimeDigits num = coprimeDigits num (max) Int32.MinValue
 let countCoprimeDigits num = coprimeDigits num (fun acc _ -> acc + 1) 0 
 
+let eulerPhi num =
+    let rec helper current acc =
+        if current = 0 then acc
+        else
+            let newAcc =
+                if gcd num current = 1 then acc + 1
+                else acc
+            helper (current - 1) newAcc
+    helper (num - 1) 0
+
 [<EntryPoint>]
 let main argv =
     let num = 125
@@ -133,5 +143,8 @@ let main argv =
     Console.WriteLine($"Минимум из взаимно простых с {num} = {minCoprimeDigits num}")
     Console.WriteLine($"Максимум из взаимно простых с {num} = {maxCoprimeDigits num}")
     Console.WriteLine($"Количество взаимно простых с {num} = {countCoprimeDigits num}")
+
+    let eulerNum = 5
+    Console.WriteLine($"Число Эйлера для {eulerNum} = {eulerPhi eulerNum}")
 
     0
