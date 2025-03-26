@@ -58,18 +58,30 @@ let rec digitFold (num : int) (func : int -> int -> int) (initial : int) =
         let newInitial = func initial digit
         digitFold (num / 10) func newInitial
 
+let digitFoldWithSum num =
+    digitFold num (fun acc digit -> acc + digit) 0
+
+let digitFoldWithMultiply num =
+    digitFold num (fun acc digit -> acc * digit) 1
+
+let digitFoldWithMin num =
+    digitFold num (fun acc digit -> min acc digit) Int32.MaxValue
+
+let digitFoldWithMax num =
+    digitFold num (fun acc digit -> max acc digit) 0
+
 [<EntryPoint>]
 let main argv =
-    let sumDigits = digitFold 12345 (+) 0
+    let sumDigits = digitFoldWithSum 12345
     Console.WriteLine($"Сумма чисел 12345 = {sumDigits}")
 
-    let multiplyDigits = digitFold 12345 (*) 1
+    let multiplyDigits = digitFoldWithMultiply 12345
     Console.WriteLine($"Произведение чисел 12345 = {multiplyDigits}")
 
-    let maxDigit = digitFold 12345 (max) Int32.MinValue
+    let maxDigit = digitFoldWithMin 12345
     Console.WriteLine($"Максимальное число из 12345 = {maxDigit}")
 
-    let minDigit = digitFold 12345 (min) Int32.MaxValue
+    let minDigit = digitFoldWithMax 12345
     Console.WriteLine($"Минимальное число из 12345 = {minDigit}")
 
     0
