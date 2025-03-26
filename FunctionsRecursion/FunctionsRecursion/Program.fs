@@ -135,16 +135,30 @@ let eulerPhi num =
             helper (current - 1) newAcc
     helper (num - 1) 0
 
+let coprimeWithCondition (num: int) (condition: int -> bool) (func: int -> int -> int) (initial: int) = 
+    let rec helper current acc =
+        if current = 0 then acc
+        else
+            let digit = current % 10
+            let newAcc =
+                if digit <> 0 && gcd num digit = 1 && condition digit then func acc digit
+                else acc
+            helper (current / 10) newAcc
+    helper num initial
+
+let sumCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit % 2 = 0) (+) 0
+let multiplyCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit > 3) (*) 1
+let minCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit <> 2) (min) Int32.MaxValue 
+let maxCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit % 5 <> 0) (max) Int32.MinValue
+let countCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit < 4) (fun acc _ -> acc + 1) 0 
+
 [<EntryPoint>]
 let main argv =
     let num = 125
-    Console.WriteLine($"Сумма взаимно простых с {num} = {sumCoprimeDigits num}")
-    Console.WriteLine($"Произведение взаимно простых с {num} = {multiplyCoprimeDigits num}")
-    Console.WriteLine($"Минимум из взаимно простых с {num} = {minCoprimeDigits num}")
-    Console.WriteLine($"Максимум из взаимно простых с {num} = {maxCoprimeDigits num}")
-    Console.WriteLine($"Количество взаимно простых с {num} = {countCoprimeDigits num}")
-
-    let eulerNum = 5
-    Console.WriteLine($"Число Эйлера для {eulerNum} = {eulerPhi eulerNum}")
+    Console.WriteLine($"Сумма взаимно простых с {num} (чётные) = {sumCoprimeWithCondition num}")
+    Console.WriteLine($"Произведение взаимно простых с {num} (больше 3) = {multiplyCoprimeWithCondition num}")
+    Console.WriteLine($"Минимум из взаимно простых с {num} (не равных 2) = {minCoprimeWithCondition num}")
+    Console.WriteLine($"Максимум из взаимно простых с {num} (не делящихся на 5) = {maxCoprimeWithCondition num}")
+    Console.WriteLine($"Количество взаимно простых с {num} (меньше 4) = {countCoprimeWithCondition num}")
 
     0
