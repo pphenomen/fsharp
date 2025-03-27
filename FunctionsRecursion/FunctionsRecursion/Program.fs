@@ -1,7 +1,9 @@
 ﻿open System
 
+// 1
 printfn("Hello World!")
 
+// 2 
 let solveQuadratic a b c =
     let discriminant = b*b - 4.0*a*c
     if discriminant > 0.0 then
@@ -21,6 +23,7 @@ let resultOutput () =
         | Some(x1, x2) when x1 = x2 -> printfn $"Уравнение имеет один корень: {x1}"
         | None -> printfn "Нет вещественных корней"
 
+// 3
 let circleSquare r : float =
     let pi = 3.14159
     pi * r * r
@@ -28,10 +31,12 @@ let circleSquare r : float =
 let cylinderVolume h S : float =
     h * S
 
+// 4
 let rec digitalSum num : int =
     if num = 0 then 0
     else (num % 10) + (digitalSum (num / 10))
 
+// 5
 let tailDigitalSum num : int =
     let rec digitalSubSum num currentSum = 
         if num = 0 then currentSum
@@ -42,6 +47,7 @@ let tailDigitalSum num : int =
             digitalSubSum currentNum accumulator
     digitalSubSum num 0
 
+// 6
 let rec factorial num : int =
     if num <= 1 then 1
     else num * factorial(num - 1)
@@ -52,6 +58,12 @@ let tailFactorial num : int =
         else accumulator * num |> helper(num - 1)
     helper num 1
 
+let func (arg: bool) =
+    match arg with
+    | true -> tailDigitalSum
+    | false -> tailFactorial
+
+// 7
 let rec digitFold (num : int) (func : int -> int -> int) (initial : int) =
     if num = 0 then initial
     else
@@ -59,6 +71,7 @@ let rec digitFold (num : int) (func : int -> int -> int) (initial : int) =
         let newInitial = func initial digit
         digitFold (num / 10) func newInitial
 
+// 8
 let digitFoldWithSum num =
     digitFold num (fun acc digit -> acc + digit) 0
 
@@ -71,6 +84,7 @@ let digitFoldWithMin num =
 let digitFoldWithMax num =
     digitFold num (fun acc digit -> max acc digit) 0
 
+// 9
 let digitFoldWithCondition (num: int) (func: int -> int -> int) (initial: int) (condition: int -> bool) =
     let rec helper num acc = 
         if num = 0 then acc
@@ -80,21 +94,19 @@ let digitFoldWithCondition (num: int) (func: int -> int -> int) (initial: int) (
             helper (num / 10) newAcc
     helper num initial
 
-let sumEvenDigitsCondition num =
-    digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit % 2 = 0)
+// 10
+let sumEvenDigitsCondition num = digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit % 2 = 0)
+let sumDigitsGreaterThreeCondition num = digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit > 3)
+let minDigitsCondition num = digitFoldWithCondition num (fun acc digit -> min acc digit) Int32.MaxValue (fun digit -> true)
 
-let sumDigitsGreaterThreeCondition num =
-    digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit > 3)
-
-let minDigitsCondition num =
-    digitFoldWithCondition num (fun acc digit -> min acc digit) Int32.MaxValue (fun digit -> true)
-
+// 11
 let choiseLP input =
     match input with
     | "F#"| "Prolog" -> "Подлиза"
     | "Ruby" -> "Мало было?"
     | _ -> "Главное, что ты счастлив"
 
+// 12
 let curryChoiseLP () =
     let input = Console.ReadLine()
     let processing = choiseLP input
@@ -104,6 +116,7 @@ let curryChoiseLP () =
 let superposChoiseLP () =
     (Console.ReadLine >> choiseLP >> Console.WriteLine)()
 
+// 13
 let rec gcd a b = 
     if b = 0 then a
     else gcd b (a % b)
@@ -125,6 +138,7 @@ let minCoprimeDigits num = coprimeDigits num (min) Int32.MaxValue
 let maxCoprimeDigits num = coprimeDigits num (max) Int32.MinValue
 let countCoprimeDigits num = coprimeDigits num (fun acc _ -> acc + 1) 0 
 
+// 14
 let eulerPhi num =
     let rec helper current acc =
         if current = 0 then acc
@@ -135,6 +149,7 @@ let eulerPhi num =
             helper (current - 1) newAcc
     helper (num - 1) 0
 
+// 15
 let coprimeWithCondition (num: int) (condition: int -> bool) (func: int -> int -> int) (initial: int) = 
     let rec helper current acc =
         if current = 0 then acc
@@ -152,13 +167,27 @@ let minCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit <
 let maxCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit % 5 <> 0) (max) Int32.MinValue
 let countCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit < 4) (fun acc _ -> acc + 1) 0 
 
+// ЛР: найти количество делителей числа 
+let rec countDivisors num i =
+    match i with
+    | i when (num % i = 0 && i < num) -> 1 + countDivisors num (i + 1)
+    | i when (i >= num) -> 0
+    | _ -> 0 + countDivisors num (i + 1)
+    
+let tailCountDivisors num =
+    let rec helper num i acc =
+        match i with
+        | _ when i >= num -> acc
+        | _ when num % i = 0 -> helper num (i + 1) (acc + 1)
+        | _ -> helper num (i + 1) acc
+    helper num 1 0
+
+let countDivisorsTest () =
+    System.Console.WriteLine(countDivisors 10 1)
+    System.Console.WriteLine(tailCountDivisors 10)
+
 [<EntryPoint>]
 let main argv =
-    let num = 125
-    Console.WriteLine($"Сумма взаимно простых с {num} (чётные) = {sumCoprimeWithCondition num}")
-    Console.WriteLine($"Произведение взаимно простых с {num} (больше 3) = {multiplyCoprimeWithCondition num}")
-    Console.WriteLine($"Минимум из взаимно простых с {num} (не равных 2) = {minCoprimeWithCondition num}")
-    Console.WriteLine($"Максимум из взаимно простых с {num} (не делящихся на 5) = {maxCoprimeWithCondition num}")
-    Console.WriteLine($"Количество взаимно простых с {num} (меньше 4) = {countCoprimeWithCondition num}")
+    countDivisorsTest()
 
     0
