@@ -22,8 +22,6 @@ let resultOutput () =
         | Some(x, _) -> printfn $"Уравнение имеет один корень: {x}"
         | None -> printfn "Нет вещественных корней"
 
-resultOutput ()
-
 // 3
 let circleSquare r : float =
     let pi = 3.14159
@@ -31,6 +29,25 @@ let circleSquare r : float =
 
 let cylinderVolume h S : float =
     h * S
+
+let pipelineCylinderVolume () =
+    let r = Console.ReadLine() |> float
+    let h = Console.ReadLine() |> float
+
+    r |> circleSquare |> cylinderVolume h |> printfn "Объем цилиндра: %f"
+
+let superposCylinderVolume () =
+    let r = Console.ReadLine() |> float
+    let h = Console.ReadLine() |> float
+
+    let superpos = circleSquare >> cylinderVolume h
+    superpos r |> printfn "Объем цилиндра: %f"
+
+let curryCylinderVolume () =
+    let r = Console.ReadLine() |> float
+    let h = Console.ReadLine() |> float
+    
+    (cylinderVolume h) (circleSquare r) |> printfn "Объем цилиндра: %f"
 
 // 4
 let rec digitalSum num : int =
