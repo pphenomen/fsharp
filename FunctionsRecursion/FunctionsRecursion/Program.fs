@@ -16,12 +16,13 @@ let solveQuadratic a b c =
     else 
         None
 
-let res = solveQuadratic 1.0 2.0 -3.0
 let resultOutput () =
-    match res with
-        | Some(x1, x2) -> printfn $"Решение: {x1}, {x2}"
-        | Some(x1, x2) when x1 = x2 -> printfn $"Уравнение имеет один корень: {x1}"
+    match solveQuadratic 1.0 2.0 1.0 with
+        | Some(x1, x2) when x1 <> x2 -> printfn $"Решение: {x1}, {x2}"
+        | Some(x, _) -> printfn $"Уравнение имеет один корень: {x}"
         | None -> printfn "Нет вещественных корней"
+
+resultOutput ()
 
 // 3
 let circleSquare r : float =
