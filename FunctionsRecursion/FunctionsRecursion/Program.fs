@@ -50,31 +50,31 @@ let curryCylinderVolume () =
     (cylinderVolume h) (circleSquare r) |> printfn "Объем цилиндра: %f"
 
 // 4
-let rec digitalSum num : int =
-    if num = 0 then 0
-    else (num % 10) + (digitalSum (num / 10))
+let rec digitalSum num =
+    match num with
+    | _ when num = 0 -> 0
+    | _ -> (num % 10) + (digitalSum (num / 10))
 
 // 5
-let tailDigitalSum num : int =
-    let rec digitalSubSum num currentSum = 
-        if num = 0 then currentSum
-        else
-            let currentNum = num / 10
-            let digital = num % 10
-            let accumulator = currentSum + digital
-            digitalSubSum currentNum accumulator
-    digitalSubSum num 0
+let tailDigitalSum num =
+    let rec loop num acc =
+        match num with 
+        | 0 -> acc
+        | _ -> loop (num / 10) (acc + (num % 10))
+    loop num 0
 
 // 6
-let rec factorial num : int =
-    if num <= 1 then 1
-    else num * factorial(num - 1)
+let rec factorial num =
+    match num with
+    | 0 | 1 -> 1
+    | _ -> num * factorial(num - 1)
 
-let tailFactorial num : int = 
-    let rec helper num accumulator =
-        if num <= 1 then accumulator
-        else accumulator * num |> helper(num - 1)
-    helper num 1
+let tailFactorial num =
+    let rec loop num acc = 
+        match num with
+        | 0 | 1 -> acc
+        | _ -> loop (num - 1) (acc * num)
+    loop num 1
 
 let func (arg: bool) =
     match arg with
@@ -82,40 +82,41 @@ let func (arg: bool) =
     | false -> tailFactorial
 
 // 7
-let rec digitFold (num : int) (func : int -> int -> int) (initial : int) =
-    if num = 0 then initial
-    else
+let rec reduce (num: int) (func: int->int->int) (acc: int) =
+    match num with
+    | 0 -> acc
+    | _ -> 
         let digit = num % 10
-        let newInitial = func initial digit
-        digitFold (num / 10) func newInitial
+        let newAcc = func acc digit
+        let currentDigit = num / 10
+        reduce currentDigit func newAcc
 
 // 8
-let digitFoldWithSum num =
-    digitFold num (fun acc digit -> acc + digit) 0
-
-let digitFoldWithMultiply num =
-    digitFold num (fun acc digit -> acc * digit) 1
-
-let digitFoldWithMin num =
-    digitFold num (fun acc digit -> min acc digit) Int32.MaxValue
-
-let digitFoldWithMax num =
-    digitFold num (fun acc digit -> max acc digit) 0
+let reduceTest () =
+    Console.WriteLine(reduce 1234 (fun acc digit -> acc + digit) 0)
+    Console.WriteLine(reduce 1234 (fun acc digit -> acc * digit) 1)
+    Console.WriteLine(reduce 1234 (fun acc digit -> if digit < acc then digit else acc) 10)
+    Console.WriteLine(reduce 1234 (fun acc digit -> if digit > acc then digit else acc) 0)
 
 // 9
-let digitFoldWithCondition (num: int) (func: int -> int -> int) (initial: int) (condition: int -> bool) =
-    let rec helper num acc = 
-        if num = 0 then acc
-        else
-            let digit = num % 10
-            let newAcc = if condition digit then func acc digit else acc
-            helper (num / 10) newAcc
-    helper num initial
+let rec filterReduce (num: int) (func: int->int->int) (acc: int) (condition: int->bool) =
+    match num with
+    | 0 -> acc
+    | _ -> 
+        let digit = num % 10
+        let newAcc = 
+            match condition digit with
+            | true -> func acc digit 
+            | false -> acc
+        let currentDigit = num / 10
+        filterReduce currentDigit func newAcc condition
 
 // 10
-let sumEvenDigitsCondition num = digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit % 2 = 0)
-let sumDigitsGreaterThreeCondition num = digitFoldWithCondition num (fun acc digit -> acc + digit) 0 (fun digit -> digit > 3)
-let minDigitsCondition num = digitFoldWithCondition num (fun acc digit -> min acc digit) Int32.MaxValue (fun digit -> true)
+let filterReduceTest () = 
+    Console.WriteLine(filterReduce 12345 (fun acc digit -> acc + digit) 0 (fun digit -> digit % 2 = 0))
+    Console.WriteLine(filterReduce 12345 (fun acc digit -> acc * digit) 1 (fun digit -> digit <> 1))
+    Console.WriteLine(filterReduce 12345 (fun acc digit -> acc + 1) 0 (fun digit -> digit > 3))
+    Console.WriteLine(filterReduce 12345 (fun acc digit -> if digit < acc then digit else acc) 10 (fun digit -> true))
 
 // 11
 let choiseLP input =
@@ -136,54 +137,62 @@ let superposChoiseLP () =
 
 // 13
 let rec gcd a b = 
-    if b = 0 then a
-    else gcd b (a % b)
+    match b with
+    | 0 -> a
+    | _ -> gcd b (a%b)
 
-let coprimeDigits (num: int) (func: int -> int -> int) (initial: int) =
-    let rec helper current acc =
-        if current = 0 then acc
-        else
+let coprimeDigits (num: int) (func: int -> int -> int) (acc: int) =
+    let rec loop current acc =
+        match current with
+        | 0 -> acc
+        | _ ->
             let digit = current % 10
-            let newAcc = 
-                if digit <> 0 && gcd num digit = 1 then func acc digit
-                else acc
-            helper (current / 10) newAcc
-    helper num initial
-
-let sumCoprimeDigits num = coprimeDigits num (+) 0
-let multiplyCoprimeDigits num = coprimeDigits num (*) 1
-let minCoprimeDigits num = coprimeDigits num (min) Int32.MaxValue
-let maxCoprimeDigits num = coprimeDigits num (max) Int32.MinValue
-let countCoprimeDigits num = coprimeDigits num (fun acc _ -> acc + 1) 0 
-
-// 14
-let eulerPhi num =
-    let rec helper current acc =
-        if current = 0 then acc
-        else
             let newAcc =
-                if gcd num current = 1 then acc + 1
-                else acc
-            helper (current - 1) newAcc
-    helper (num - 1) 0
+                match digit with
+                | 0 -> acc
+                | digit when gcd num digit = 1 -> func acc digit
+                | _ -> acc
+            loop (current / 10) newAcc
+    loop num acc
+
+let coprimeDigitsTest () =
+    Console.WriteLine(coprimeDigits 12345 (fun acc digit -> acc + digit) 0)
+    Console.WriteLine(coprimeDigits 12345 (fun acc digit -> acc * digit) 1)
+    Console.WriteLine(coprimeDigits 12345 (fun acc digit -> if digit < acc then digit else acc) 10)
+    Console.WriteLine(coprimeDigits 12345 (fun acc digit -> if digit > acc then digit else acc) 0)
+    Console.WriteLine(coprimeDigits 12345 (fun acc digit -> acc + 1) 0)
+
+let eulerPhi num =
+    let rec loop current acc = 
+        match current with
+        | 0 -> acc
+        | _ -> 
+            let newAcc =
+                match gcd num current with
+                | 1 -> acc + 1
+                | _ -> acc
+            loop (current - 1) newAcc
+    loop (num - 1) 0
 
 // 15
 let coprimeWithCondition (num: int) (condition: int -> bool) (func: int -> int -> int) (initial: int) = 
-    let rec helper current acc =
-        if current = 0 then acc
-        else
+    let rec loop current acc =
+        match current with
+        | 0 -> acc 
+        | _ -> 
             let digit = current % 10
             let newAcc =
-                if digit <> 0 && gcd num digit = 1 && condition digit then func acc digit
+                if gcd num digit = 1 && condition digit then func acc digit
                 else acc
-            helper (current / 10) newAcc
-    helper num initial
+            loop (current / 10) newAcc
+    loop num initial
 
-let sumCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit % 2 = 0) (+) 0
-let multiplyCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit > 3) (*) 1
-let minCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit <> 2) (min) Int32.MaxValue 
-let maxCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit % 5 <> 0) (max) Int32.MinValue
-let countCoprimeWithCondition num = coprimeWithCondition num (fun digit -> digit < 4) (fun acc _ -> acc + 1) 0 
+let coprimeWithConditionTest () =
+    Console.WriteLine(coprimeWithCondition 12345 (fun digit -> digit % 2 = 0) (fun acc digit -> digit + acc) 0)
+    Console.WriteLine(coprimeWithCondition 12345 (fun digit -> digit > 3) (fun acc digit -> digit * acc) 1)
+    Console.WriteLine(coprimeWithCondition 12345 (fun digit -> digit <> 1) (fun acc digit -> if digit < acc then digit else acc) 10)
+    Console.WriteLine(coprimeWithCondition 12345 (fun digit -> digit % 5 <> 0) (fun acc digit -> if digit > acc then digit else acc) 0)
+    Console.WriteLine(coprimeWithCondition 12345 (fun digit -> digit < 4) (fun acc digit -> acc + 1) 0)
 
 // ЛР: найти количество делителей числа 
 let rec countDivisors num i =
@@ -206,6 +215,5 @@ let countDivisorsTest () =
 
 [<EntryPoint>]
 let main argv =
-    countDivisorsTest()
 
     0
