@@ -234,10 +234,20 @@ let maxPrimeDivisor num =
             | _ -> loop num (divisor + 1) maxDivisor
     loop num 2 1
 
+let multiplyDigitsNotDivFive num =
+    let rec loop num acc =
+        match num with
+        | 0 -> acc
+        | _ -> 
+            let digit = num % 10
+            let currentNum = num / 10
+            match digit % 5 with
+            | 0 -> loop currentNum acc
+            | _ -> loop currentNum (acc * digit)
+    loop num 1
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(isPrime 3)
-    Console.WriteLine(isPrime 4)
-    Console.WriteLine(maxPrimeDivisor 24)
+    Console.WriteLine(multiplyDigitsNotDivFive 12345)
 
     0
