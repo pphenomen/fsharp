@@ -235,16 +235,7 @@ let maxPrimeDivisor num =
     loop num 2 1
 
 let multiplyDigitsNotDivFive num =
-    let rec loop num acc =
-        match num with
-        | 0 -> acc
-        | _ -> 
-            let digit = num % 10
-            let currentNum = num / 10
-            match digit % 5 with
-            | 0 -> loop currentNum acc
-            | _ -> loop currentNum (acc * digit)
-    loop num 1
+    filterReduce num (fun acc digit -> digit * acc) 1 (fun digit -> digit % 5 <> 0)
 
 let gcdMaxOddNonPrimeDivisorAndMultiplyDigits num =
     let rec maxOddNonPrimeDivisor divisor maxDivisor = 
@@ -258,8 +249,29 @@ let gcdMaxOddNonPrimeDivisorAndMultiplyDigits num =
     let multiply = reduce num (fun acc digit -> acc * digit) 1
     gcd maxDiv multiply
 
+let chooseTask task num =
+    match task with
+    | 1 -> maxPrimeDivisor num
+    | 2 -> multiplyDigitsNotDivFive num
+    | 3 -> gcdMaxOddNonPrimeDivisorAndMultiplyDigits num
+
+let curryChooseTask () =
+    let args = (Console.ReadLine() |> int, Console.ReadLine() |> int) 
+    let func = chooseTask (fst args)
+    let result = func (snd args)
+    Console.WriteLine result
+
+let superposChooseTask =
+    Console.ReadLine
+    >> fun input ->
+        let args = input.Split(' ')
+        let task = int args.[0]
+        let num = int args.[1]
+        chooseTask task num
+    >> Console.WriteLine
+    
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(gcdMaxOddNonPrimeDivisorAndMultiplyDigits 100)
+    superposChooseTask ()
 
     0
