@@ -213,7 +213,31 @@ let countDivisorsTest () =
     System.Console.WriteLine(countDivisors 10 1)
     System.Console.WriteLine(tailCountDivisors 10)
 
+// 16 (var 9)
+let rec isPrime num =
+    let rec check divisor =
+        match divisor >= num with
+        | true -> true
+        | false -> 
+            match num % divisor with
+            | 0 -> false
+            | _ -> check (divisor + 1)
+    if num < 2 then false else check 2
+
+let maxPrimeDivisor num =
+    let rec loop num divisor maxDivisor =
+        match divisor > num with
+        | true -> maxDivisor
+        | false ->
+            match num % divisor with
+            | 0 when isPrime divisor -> loop num (divisor + 1) divisor
+            | _ -> loop num (divisor + 1) maxDivisor
+    loop num 2 1
+
 [<EntryPoint>]
 let main argv =
+    Console.WriteLine(isPrime 3)
+    Console.WriteLine(isPrime 4)
+    Console.WriteLine(maxPrimeDivisor 24)
 
     0
