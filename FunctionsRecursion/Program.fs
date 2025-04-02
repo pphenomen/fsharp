@@ -246,8 +246,20 @@ let multiplyDigitsNotDivFive num =
             | _ -> loop currentNum (acc * digit)
     loop num 1
 
+let gcdMaxOddNonPrimeDivisorAndMultiplyDigits num =
+    let rec maxOddNonPrimeDivisor divisor maxDivisor = 
+        match divisor > num with
+        | true -> maxDivisor
+        | false ->
+            match num % divisor = 0, divisor % 2 = 1, isPrime divisor with
+            | true, true, false -> maxOddNonPrimeDivisor (divisor + 1) divisor
+            | _ -> maxOddNonPrimeDivisor (divisor + 1) maxDivisor
+    let maxDiv = maxOddNonPrimeDivisor 1 1
+    let multiply = reduce num (fun acc digit -> acc * digit) 1
+    gcd maxDiv multiply
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(multiplyDigitsNotDivFive 12345)
+    Console.WriteLine(gcdMaxOddNonPrimeDivisorAndMultiplyDigits 100)
 
     0
