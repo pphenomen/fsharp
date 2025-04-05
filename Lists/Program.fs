@@ -106,8 +106,35 @@ let mostFrequency list =
 let countQuadsOfElements list =
     list |> List.filter (fun quadEl -> List.exists(fun el -> el * el = quadEl) list) |> List.length
 
+// 9
+let sumDigits num =
+    let rec loop num acc =
+        match num with
+        | 0 -> acc
+        | _ -> loop(num/10) (acc + (num%10))
+    loop num 0
+
+let countDivisors num =
+    let rec loop num div acc =
+        match div with
+        | _ when div >= num -> acc
+        | _ when num % div = 0 -> loop num (div + 1) (acc + 1)
+        | _ -> loop num (div + 1) acc
+    loop num 1 0
+
+let sortList1 list1 = List.sortDescending(list1)
+let sortList2 list2 = List.sortBy(fun el -> (sumDigits el)) list2
+let sortList3 list3 = List.sortByDescending(fun el -> (countDivisors el)) list3
+
+let listTuples list1 list2 list3 = List.zip3 (sortList1 list1) (sortList2 list2) (sortList3 list3)
+
 [<EntryPoint>]
 let main argv = 
-    Console.WriteLine(countQuadsOfElements [2; 3; 4; 9; 5])
+    Console.WriteLine(sumDigits 12345)
+    Console.WriteLine(countDivisors 4)
+    Console.WriteLine(sortList1 [1;5;3;4;2])
+    Console.WriteLine(sortList2 [19;18;17;16;15])
+    Console.WriteLine(sortList3 [4;8;16;32;64])
+    Console.WriteLine(listTuples [1;5;3;4;2] [19;18;17;16;15] [4;8;16;32;64])
 
     0
