@@ -26,9 +26,10 @@ let rec accCond list (f : int -> int -> int) p acc =
                 else accCond t f p acc
 
 // 4
-Console.WriteLine(accCond [1;2;3;4;5] (fun digit acc -> digit + acc) (fun digit -> digit % 2 = 0) 0)
-Console.WriteLine(accCond [1;2;3;4;5] (fun acc digit -> if digit < acc then digit else acc) (fun digit -> digit <> 1) 10)
-Console.WriteLine(accCond [1;2;3;4;5] (fun digit acc -> acc + 1) (fun digit -> digit % 2 <> 0) 1)
+let accCondTest () =
+    Console.WriteLine(accCond [1;2;3;4;5] (fun digit acc -> digit + acc) (fun digit -> digit % 2 = 0) 0)
+    Console.WriteLine(accCond [1;2;3;4;5] (fun acc digit -> if digit < acc then digit else acc) (fun digit -> digit <> 1) 10)
+    Console.WriteLine(accCond [1;2;3;4;5] (fun digit acc -> acc + 1) (fun digit -> digit % 2 <> 0) 1)
 
 // 5
 let max2 x y = if x > y then x else y
@@ -77,3 +78,28 @@ let getIn list pos =
 let f7 list = 
     let fL = freqList list list []
     (listMax fL) |> (pos fL) |> (getIn list)
+
+// 6
+type 'string btree = 
+    Node of 'string * 'string btree * 'string btree
+    | Nil
+
+let prefix root left right = (root(); left(); right())
+let infix root left right = (left(); root(); right())
+let postfix root left right = (left(); right(); root())
+
+let rec printTree tree =
+    match tree with
+    | Nil -> ()
+    | Node(value, left, right) ->
+        printfn "%s" value
+        printTree left
+        printTree right 
+
+let stringTree = Node("A", Node("B", Node("D", Nil, Nil), Node("E", Nil, Nil)), Node("C", Nil, Node("F", Nil, Nil)))
+
+[<EntryPoint>]
+let main argv = 
+    printTree stringTree
+
+    0
