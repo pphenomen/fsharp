@@ -102,8 +102,12 @@ let stringTree = Node("A", Node("B", Node("D", Nil, Nil), Node("E", Nil, Nil)), 
 let mostFrequency list =
     list |> List.groupBy id |> List.maxBy (fun (_, maxList) -> List.length maxList) |> fst
 
+// 8
+let countQuadsOfElements list =
+    list |> List.filter (fun quadEl -> List.exists(fun el -> el * el = quadEl) list) |> List.length
+
 [<EntryPoint>]
 let main argv = 
-    Console.WriteLine(mostFrequency [1;2;2;3;4;4;5;5;5])
+    Console.WriteLine(countQuadsOfElements [2; 3; 4; 9; 5])
 
     0
