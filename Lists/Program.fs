@@ -98,8 +98,12 @@ let rec printTree tree =
 
 let stringTree = Node("A", Node("B", Node("D", Nil, Nil), Node("E", Nil, Nil)), Node("C", Nil, Node("F", Nil, Nil)))
 
+// 7
+let mostFrequency list =
+    list |> List.groupBy id |> List.maxBy (fun (_, maxList) -> List.length maxList) |> fst
+
 [<EntryPoint>]
 let main argv = 
-    printTree stringTree
+    Console.WriteLine(mostFrequency [1;2;2;3;4;4;5;5;5])
 
     0
