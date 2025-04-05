@@ -128,8 +128,7 @@ let sortList3 list3 = List.sortByDescending(fun el -> (countDivisors el)) list3
 
 let listTuples list1 list2 list3 = List.zip3 (sortList1 list1) (sortList2 list2) (sortList3 list3)
 
-[<EntryPoint>]
-let main argv = 
+let listTuplesTest () = 
     Console.WriteLine(sumDigits 12345)
     Console.WriteLine(countDivisors 4)
     Console.WriteLine(sortList1 [1;5;3;4;2])
@@ -137,4 +136,25 @@ let main argv =
     Console.WriteLine(sortList3 [4;8;16;32;64])
     Console.WriteLine(listTuples [1;5;3;4;2] [19;18;17;16;15] [4;8;16;32;64])
 
+// 10
+let rec readData n =
+    match n with
+    | 0 -> []
+    | _ -> 
+        let head = Console.ReadLine()
+        let tail = readData (n - 1)
+        head::tail
+
+let printList list =
+    list |> List.iter (fun (el : string) -> Console.WriteLine(el))
+
+let readDataSorted () =
+    let n = Console.ReadLine() |> int
+    let sorted = readData n |> List.sortBy String.length
+    printList(sorted)
+
+[<EntryPoint>]
+let main argv =
+    readDataSorted ()
+    
     0
