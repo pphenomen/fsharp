@@ -148,13 +148,58 @@ let rec readData n =
 let printList list =
     list |> List.iter (fun (el : string) -> Console.WriteLine(el))
 
-let readDataSorted () =
+let readDataSorted () = 
     let n = Console.ReadLine() |> int
     let sorted = readData n |> List.sortBy String.length
     printList(sorted)
 
+// 11
+let beforeLastMin list =
+    let minEl = List.min list
+    let lastMin = list |> List.findIndexBack (fun el -> el = minEl)
+    list |> List.take lastMin 
+
+let beforeLastMinChurch list =
+    let rec loop curList minEl lastMin acc index =
+        match curList with
+        | [] -> List.rev acc
+        | head::tail ->
+            if head = minEl then 
+                loop tail minEl (index + 1) acc (index + 1)
+            else
+                if index < lastMin then
+                    loop tail minEl lastMin (head::acc) (index + 1)
+                else
+                    loop tail minEl lastMin acc (index + 1)
+
+    let minEl = 
+        let rec findMin list minVal =
+            match list with
+            | [] -> minVal
+            | head::tail -> 
+                if head < minVal then findMin tail head
+                else findMin tail minVal
+        findMin list 100
+
+    let lastMinIndex =
+        let rec findLastMin list minEl index acc =
+            match list with
+            | [] -> acc
+            | head::tail ->
+                if head = minEl then
+                    findLastMin tail minEl (index + 1) index
+                else
+                    findLastMin tail minEl (index + 1) acc
+        findLastMin list minEl 0 (-1)
+
+    loop list minEl lastMinIndex [] 0
+
 [<EntryPoint>]
 let main argv =
-    readDataSorted ()
-    
+    Console.WriteLine(beforeLastMin [5;3;1;2;4;6])
+
+    let churchList = readList 6
+    let result = beforeLastMinChurch churchList
+    writeList result
+
     0
