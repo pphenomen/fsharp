@@ -293,13 +293,48 @@ let rec uniquePrimeDivisorsChurch list =
 
         removeDuplicates allDivisors []
 
+// 16
+let count list value = 
+    list |> List.filter ((=) value) |> List.length
+let processList list = 
+    list |> List.filter (fun x -> x >= 0 && x < 100 && count list x > 2) |> List.map (fun x -> x * x) |> List.distinct
+
+let rec count2 list value =
+    match list with
+    | [] -> 0
+    | head :: tail ->
+        let newCount = if head = value then 1 else 0
+        newCount + count2 tail value
+
+let rec filterList list acc =
+    match list with
+    | [] -> acc
+    | head :: tail ->
+        if head >= 0 && head < 100 && count2 list head > 2 then
+            filterList tail (acc @ [head * head])
+        else
+            filterList tail acc
+
+let rec removeDuplicates2 list acc =
+    match list with
+    | [] -> acc
+    | head :: tail ->
+        if List.contains head acc then
+            removeDuplicates2 tail acc
+        else
+            removeDuplicates2 tail (acc @ [head])
+
+let processListChurch list =
+    let filteredList = filterList list []
+    removeDuplicates2 filteredList []
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(uniquePrimeDivisors [10; 15; 21])
+    Console.WriteLine(processList [1;2;2;2;3;4;5;5;5;5;-2;-2;-2;101;102])
 
-    let churchList = readList 3
+    let churchList = readList 15
     printf "\n"
-    let result = uniquePrimeDivisorsChurch churchList
+    let result = processListChurch churchList
     writeList result
 
     0
