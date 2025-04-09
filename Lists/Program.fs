@@ -236,12 +236,30 @@ let maxInRangeChurch list a b =
     let maxEl = findMax list -1
     maxEl >= a && maxEl <= b
 
+// 14
+let evenOddIndexes list =
+    let even = list |> List.mapi (fun ind el -> (ind, el)) |> List.filter (fun (ind, _) -> ind % 2 = 0) |> List.map snd
+    let odd = list |> List.mapi (fun ind el -> (ind, el)) |> List.filter (fun (ind, _) -> ind % 2 <> 0) |> List.map snd
+    even @ odd
+
+let evenOddIndexesChurch list =
+    let rec loop list evenAcc oddAcc index = 
+        match list with
+        | [] -> List.rev evenAcc @ List.rev oddAcc
+        | head::tail ->
+            if index % 2 = 0 then
+                loop tail (head::evenAcc) oddAcc (index + 1)
+            else
+                loop tail evenAcc (head::oddAcc) (index + 1)
+    loop list [] [] 0 
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(maxInRange [1;2;5;3;4] 1 6)
+    Console.WriteLine(evenOddIndexes [1;2;3;4;5;6])
 
-    let churchList = readList 5
-    let result = maxInRangeChurch churchList 1 6
-    Console.WriteLine(result)
+    let churchList = readList 6
+    printf "\n"
+    let result = evenOddIndexesChurch churchList
+    writeList result
 
     0
