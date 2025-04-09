@@ -218,12 +218,30 @@ let shiftRightChurchFinal list =
         let last = List.last list
         shiftRightChurch (list |> List.take (List.length list - 1)) [last]
 
+// 13
+let maxInRange list a b =
+    let maxEl = List.max list
+    maxEl >= a && maxEl <= b
+
+let rec findMax list maxVal =
+    match list with
+    | [] -> maxVal
+    | head::tail ->
+        if head > maxVal then
+            findMax tail head
+        else
+            findMax tail maxVal
+
+let maxInRangeChurch list a b =
+    let maxEl = findMax list -1
+    maxEl >= a && maxEl <= b
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(shiftRight [1;2;3])
+    Console.WriteLine(maxInRange [1;2;5;3;4] 1 6)
 
-    let churchList = readList 3
-    let result = shiftRightChurchFinal churchList
-    writeList result
+    let churchList = readList 5
+    let result = maxInRangeChurch churchList 1 6
+    Console.WriteLine(result)
 
     0
