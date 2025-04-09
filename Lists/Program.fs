@@ -194,12 +194,36 @@ let beforeLastMinChurch list =
 
     loop list minEl lastMinIndex [] 0
 
+// 12
+let shiftRight list =
+    match list with
+    | [] -> []
+    | _ -> 
+        let last = List.last list
+        last::(list |> List.take (List.length list - 1))
+
+let rec shiftRightChurch list acc =
+    match list with
+    | [] -> List.rev acc
+    | head::tail ->
+        if tail = [] then
+            List.rev (head::acc)
+        else
+            shiftRightChurch tail (head::acc)
+
+let shiftRightChurchFinal list =
+    match list with
+    | [] -> []
+    | _ -> 
+        let last = List.last list
+        shiftRightChurch (list |> List.take (List.length list - 1)) [last]
+
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(beforeLastMin [5;3;1;2;4;6])
+    Console.WriteLine(shiftRight [1;2;3])
 
-    let churchList = readList 6
-    let result = beforeLastMinChurch churchList
+    let churchList = readList 3
+    let result = shiftRightChurchFinal churchList
     writeList result
 
     0
