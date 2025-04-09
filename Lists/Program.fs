@@ -251,15 +251,55 @@ let evenOddIndexesChurch list =
                 loop tail (head::evenAcc) oddAcc (index + 1)
             else
                 loop tail evenAcc (head::oddAcc) (index + 1)
-    loop list [] [] 0 
+    loop list [] [] 0
+
+// 15
+let rec isPrime num =
+    let rec check divisor =
+        match divisor >= num with
+        | true -> true
+        | false -> 
+            match num % divisor with
+            | 0 -> false
+            | _ -> check (divisor + 1)
+    if num < 2 then false else check 2
+
+let getPrimeDivisors num =
+    [2 .. num] |> List.filter (fun el -> num % el = 0 && isPrime el)
+
+let uniquePrimeDivisors list =
+    list |> List.collect getPrimeDivisors |> List.distinct
+
+let rec getPrimeDivisorsChurch num divisor acc =
+    if divisor > num then acc
+    else 
+        let newAcc = if num % divisor = 0 && isPrime divisor then acc @ [divisor] else acc
+        getPrimeDivisorsChurch num (divisor + 1) newAcc
+
+let rec uniquePrimeDivisorsChurch list =
+    match list with
+    | [] -> []
+    | head :: tail -> 
+        let divisors = getPrimeDivisorsChurch head 2 []
+        let newList = uniquePrimeDivisorsChurch tail
+        let allDivisors = divisors @ newList
+
+        let rec removeDuplicates lst unique =
+            match lst with
+            | [] -> unique
+            | h :: t -> 
+                let updatedUnique = if List.contains h unique then unique else unique @ [h]
+                removeDuplicates t updatedUnique
+
+        removeDuplicates allDivisors []
 
 [<EntryPoint>]
 let main argv =
-    Console.WriteLine(evenOddIndexes [1;2;3;4;5;6])
+    Console.WriteLine(uniquePrimeDivisors [10; 15; 21])
 
-    let churchList = readList 6
+    let churchList = readList 3
     printf "\n"
-    let result = evenOddIndexesChurch churchList
+    let result = uniquePrimeDivisorsChurch churchList
     writeList result
 
     0
