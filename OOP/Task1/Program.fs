@@ -44,6 +44,24 @@ type Circle(radius: float) =
         member this.Print() =
             Console.WriteLine(this.ToString())
 
-let s = Circle(3.)
-Console.WriteLine(s)
+type GeometricFigure =
+    | RectangleF of float * float
+    | SquareF of float
+    | CircleF of float
+
+let CalculateArea (figure: GeometricFigure) =
+    match figure with
+    | RectangleF(w, h) -> w * h
+    | SquareF(s) -> s * s
+    | CircleF(r) -> System.Math.PI * r * r
+
+[<EntryPoint>]
+let main args =
+    let r = Rectangle(2.5, 3.5)
+    Console.WriteLine(r.Area())
+
+    let s = CalculateArea (SquareF 4.)
+    Console.WriteLine(s)
+
+    0
     
